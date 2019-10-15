@@ -1,2 +1,3 @@
 # DemoCameraX
 谷歌CameraX的Demo使用kotlin编写，另外加入了很多新特性，导致阅读不便，无法更好掌握CameraX的Api，故将该Demo主要部分翻译成Java版。
+未做权限申请，需要自行开启相机以及存储权限。

@@ -8,6 +8,9 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.File;
@@ -58,16 +61,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume(){
         super.onResume();
+        if ()
         container.postDelayed(new Runnable() {
             @Override
             public void run() {
                 container.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
-
+                replaceFragment(new CameraFragment());
 
             }
         }, IMMERSIVE_FLAG_TIMEOUT);
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.fragment_container,fragment);
+        transaction.commit();
     }
 
     @Override

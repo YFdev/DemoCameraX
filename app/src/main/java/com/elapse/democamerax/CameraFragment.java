@@ -358,14 +358,14 @@ public class CameraFragment extends Fragment {
         analyzer.onFrameAnalyzed(new AnalysisCallBack() {
             @Override
             public void onAnalysis(int luma) {
-                Log.d(TAG, "Average luminosity:"+ luma +"Frames per second.");
+                Log.d(TAG, "Average luminosity:" + luma + "Frames per second.");
             }
         });
         imageAnalyzer.setAnalyzer(analyzer);
 
-    // Apply declared configs to CameraX using the same lifecycle owner
-        CameraX.bindToLifecycle(this,preview,imageCapture,imageAnalyzer);
-}
+        // Apply declared configs to CameraX using the same lifecycle owner
+        CameraX.bindToLifecycle(this, preview, imageCapture, imageAnalyzer);
+    }
 
     /**
      * Method used to re-draw the camera UI controls, called every time configuration changes
@@ -455,21 +455,22 @@ public class CameraFragment extends Fragment {
         private ArrayList<AnalysisCallBack> listeners = new ArrayList<>();
         private long lastAnalyzedTimestamp = 0L;
         double framesPerSecond = -1.0;
+
         /**
          * Used to add listeners that will be called with each luma computed
          */
-        void onFrameAnalyzed(AnalysisCallBack listener){
+        void onFrameAnalyzed(AnalysisCallBack listener) {
             listeners.add(listener);
         }
 
         /**
          * Helper extension function used to extract a byte array from an image plane buffer
          */
-        private byte[] toByteArray(ByteBuffer buffer){
+        private byte[] toByteArray(ByteBuffer buffer) {
             buffer.rewind();// Rewind the buffer to zero
             byte[] data = new byte[buffer.remaining()];
             buffer.get(data);  // Copy the buffer into a byte array
-            return data ;// Return the byte array
+            return data;// Return the byte array
         }
 
         /**
@@ -490,7 +491,7 @@ public class CameraFragment extends Fragment {
 
         @Override
         public void analyze(ImageProxy image, int rotationDegrees) {
-            if (listeners.isEmpty()){
+            if (listeners.isEmpty()) {
                 return;
             }
             // Keep track of frames analyzed
@@ -507,27 +508,28 @@ public class CameraFragment extends Fragment {
                 // (luminance) plane
                 ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                 // Extract image data from callback object
-                byte[] data = toByteArray(buffer);
+                byte[] data = null;
+                if (buffer != null){
+                    data = toByteArray(buffer);
+                    int sum = 0;
+                    for (byte datum : data) {
+                        sum += datum & 0xFF;
+                    }
+                    // Compute average luminance for the image
+                    int luma = sum / data.length;
+                    // Call all listeners with new value
 
-                int sum = 0;
-                for (byte datum : data) {
-                    sum += datum & 0xFF;
+                    for (AnalysisCallBack callBack : listeners) {
+                        callBack.onAnalysis(luma);
+                    }
                 }
-                // Compute average luminance for the image
-                int luma = sum / data.length;
-                // Call all listeners with new value
 
-                for (AnalysisCallBack callBack : listeners){
-                    callBack.onAnalysis(luma);
-                }
                 lastAnalyzedTimestamp = frameTimestamps.getFirst();
             }
         }
-
-
     }
 
-    interface AnalysisCallBack{
+    interface AnalysisCallBack {
         void onAnalysis(int luma);
     }
 }
