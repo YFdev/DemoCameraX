@@ -68,7 +68,7 @@ public class CameraFragment extends Fragment {
     private static final String FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS";
     private static final String PHOTO_EXTENSION = ".jpg";
     private static final String ACTION_UPDATE_THUMBNAIL = "action_update_thumbnail";
-    private static final String ACTION_KEY_DOWN = "action_key_down";
+//    private static final String ACTION_KEY_DOWN = "action_key_down";
     private static final long ANIMATION_SLOW_MILLIS = 500;
     private static final long ANIMATION_FAST_MILLIS = 300;
 
@@ -95,7 +95,7 @@ public class CameraFragment extends Fragment {
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (Objects.equals(intent.getAction(), ACTION_KEY_DOWN)) {
+            if (Objects.equals(intent.getAction(), MainActivity.KEY_EVENT_ACTION)) {
                 int keyCode = intent.getIntExtra(MainActivity.KEY_EVENT_EXTRA, KeyEvent.KEYCODE_UNKNOWN);
                 if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
                     final ImageButton shutter = container.findViewById(R.id.camera_capture_button);
@@ -246,7 +246,7 @@ public class CameraFragment extends Fragment {
         viewFinder = container.findViewById(R.id.view_finder);
         broadcastManager = LocalBroadcastManager.getInstance(view.getContext());
         IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_KEY_DOWN);
+        filter.addAction(MainActivity.KEY_EVENT_ACTION);
         filter.addAction(ACTION_UPDATE_THUMBNAIL);
         broadcastManager.registerReceiver(mReceiver, filter);
         // Every time the orientation of device changes, recompute layout

@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        if ()
         container.postDelayed(new Runnable() {
             @Override
             public void run() {
