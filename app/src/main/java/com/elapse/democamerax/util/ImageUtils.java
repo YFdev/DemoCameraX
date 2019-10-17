@@ -1,4 +1,4 @@
-package com.elapse.democamerax;
+package com.elapse.democamerax.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -65,7 +65,7 @@ public class ImageUtils {
      * @param file - The image file to be read using [BitmapFactory.decodeFile]
      */
 
-    static Bitmap decodeBitmap(File file) {
+    public static Bitmap decodeBitmap(File file) {
         ExifInterface exifInterface = null;
         try {
             exifInterface = new ExifInterface(file.getAbsolutePath());
@@ -96,7 +96,7 @@ public class ImageUtils {
      * @param bitmap   - The [Bitmap] to be taken a thumbnail of
      * @param diameter - Size in pixels for the diameter of the resulting circle
      */
-    static Bitmap cropCircularThumbnail(Bitmap bitmap, int diameter) {
+    public static Bitmap cropCircularThumbnail(Bitmap bitmap, int diameter) {
         // Extract a much smaller bitmap to serve as thumbnail
         if (diameter == 0){
             diameter = 128;

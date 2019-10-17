@@ -13,11 +13,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.elapse.democamerax.fragments.CameraFragment;
+import com.elapse.democamerax.fragments.PermissionFragment;
+
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
-    static final String KEY_EVENT_ACTION = "key_event_action";
-    static final String KEY_EVENT_EXTRA = "key_event_extra";
+    public static final String KEY_EVENT_ACTION = "key_event_action";
+    public static final String KEY_EVENT_EXTRA = "key_event_extra";
     private static final long IMMERSIVE_FLAG_TIMEOUT = 500L;
     private FrameLayout container;
 
@@ -28,10 +31,11 @@ public class MainActivity extends AppCompatActivity {
 //
 //    private static final String TAG = "MainActivity";
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         container = findViewById(R.id.fragment_container);
+
 //
 //        viewFinder = findViewById(R.id.view_finder);
 //        DisplayMetrics dm = getResources().getDisplayMetrics();
@@ -67,8 +71,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 container.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
-                replaceFragment(new CameraFragment());
-
+                replaceFragment(new PermissionFragment());
             }
         }, IMMERSIVE_FLAG_TIMEOUT);
     }
@@ -77,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.replace(R.id.fragment_container,fragment);
+//        transaction.addToBackStack(null);
         transaction.commit();
     }
 

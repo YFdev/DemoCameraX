@@ -1,4 +1,4 @@
-package com.elapse.democamerax;
+package com.elapse.democamerax.util;
 
 import android.content.Context;
 import android.graphics.Matrix;
@@ -199,7 +199,7 @@ public class AutoFitBuilder {
         return rotation;
     }
 
-    static Preview build(PreviewConfig config, TextureView viewFinder) {
+    public static Preview build(PreviewConfig config, TextureView viewFinder) {
         return new AutoFitBuilder(config, new WeakReference<TextureView>(viewFinder)).useCase;
     }
 }

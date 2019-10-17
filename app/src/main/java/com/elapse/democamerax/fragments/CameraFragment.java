@@ -1,4 +1,4 @@
-package com.elapse.democamerax;
+package com.elapse.democamerax.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -40,9 +40,15 @@ import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bumptech.glide.Glide;
+import com.elapse.democamerax.MainActivity;
+import com.elapse.democamerax.R;
+import com.elapse.democamerax.util.AutoFitBuilder;
+import com.elapse.democamerax.util.ImageUtils;
 
 import java.io.File;
 import java.nio.ByteBuffer;
@@ -65,10 +71,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class CameraFragment extends Fragment {
     private static final String TAG = "CameraXBasic";
-    private static final String FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS";
+    private static final String FILENAME = "yyyyMMddHHmmss";
     private static final String PHOTO_EXTENSION = ".jpg";
     private static final String ACTION_UPDATE_THUMBNAIL = "action_update_thumbnail";
-//    private static final String ACTION_KEY_DOWN = "action_key_down";
+    //    private static final String ACTION_KEY_DOWN = "action_key_down";
     private static final long ANIMATION_SLOW_MILLIS = 500;
     private static final long ANIMATION_FAST_MILLIS = 300;
 
@@ -99,12 +105,6 @@ public class CameraFragment extends Fragment {
                 int keyCode = intent.getIntExtra(MainActivity.KEY_EVENT_EXTRA, KeyEvent.KEYCODE_UNKNOWN);
                 if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
                     final ImageButton shutter = container.findViewById(R.id.camera_capture_button);
-//                    shutter.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            capture();
-//                        }
-//                    });
                     shutter.performClick();
                     shutter.setPressed(true);
                     shutter.invalidate();
@@ -114,7 +114,7 @@ public class CameraFragment extends Fragment {
                             shutter.invalidate();
                             shutter.setPressed(false);
                         }
-                    }, 500);
+                    }, ANIMATION_SLOW_MILLIS);
                 }
             } else if (Objects.equals(intent.getAction(), ACTION_UPDATE_THUMBNAIL)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -125,7 +125,6 @@ public class CameraFragment extends Fragment {
             }
         }
     };
-
 
     /**
      * Internal reference of the [DisplayManager]
@@ -409,7 +408,6 @@ public class CameraFragment extends Fragment {
             }
         });
 
-
 // Listener for button used to switch cameras
         controls.findViewById(R.id.camera_switch_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -433,14 +431,23 @@ public class CameraFragment extends Fragment {
         controls.findViewById(R.id.photo_view_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                val arguments = Bundle().apply {
-//                    putString(KEY_ROOT_DIRECTORY, outputDirectory.absolutePath);
-//                }
-//                Navigation.findNavController(requireActivity(), R.id.fragment_container)
-//                        .navigate(R.id.action_camera_to_gallery, arguments);
+                //todo
+                replaceFragment(new GalleryFragment());
             }
         });
 
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        Bundle arguments = new Bundle();
+        arguments.putString(GalleryFragment.KEY_ROOT_DIRECTORY, outputDirectory.getAbsolutePath());
+        fragment.setArguments(arguments);
+        FragmentManager manager = getFragmentManager();
+        assert manager != null;
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     /**
@@ -509,7 +516,7 @@ public class CameraFragment extends Fragment {
                 ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                 // Extract image data from callback object
                 byte[] data = null;
-                if (buffer != null){
+                if (buffer != null) {
                     data = toByteArray(buffer);
                     int sum = 0;
                     for (byte datum : data) {
@@ -523,7 +530,6 @@ public class CameraFragment extends Fragment {
                         callBack.onAnalysis(luma);
                     }
                 }
-
                 lastAnalyzedTimestamp = frameTimestamps.getFirst();
             }
         }
