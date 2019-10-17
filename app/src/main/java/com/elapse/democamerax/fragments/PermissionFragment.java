@@ -71,9 +71,7 @@ public class PermissionFragment extends Fragment {
                 Toast.makeText(getContext(), "Permission request granted", Toast.LENGTH_LONG).show();
                 //todo
                 replaceFragment(new CameraFragment());
-//                Navigation.findNavController(requireActivity(), R.id.fragment_container)
-//                        .navigate(R.id.action_permissions_to_camera, null,
-//                                navOptions);
+
             } else {
                 Toast.makeText(getContext(), "Permission request denied", Toast.LENGTH_LONG).show();
             }

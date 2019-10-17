@@ -31,7 +31,7 @@ public class ImageUtils {
      *
      * @param orientation - One of the constants from [ExifInterface]
      */
-    static Matrix decodeExifOrientation(int orientation) {
+    private static Matrix decodeExifOrientation(int orientation) {
         Matrix matrix = new Matrix();
         // Apply transformation corresponding to declared EXIF orientation
         if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {

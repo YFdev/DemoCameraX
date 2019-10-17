@@ -20,7 +20,7 @@ import java.util.Objects;
  * author : Kevin.ning
  * e-mail :
  * date   : 2019/10/16 17:43
- * desc   :
+ * desc   :viewpager页面，用于展示图片
  * version: 1.0
  */
 public class PhotoFragment extends Fragment {
@@ -32,7 +32,9 @@ public class PhotoFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return new ImageView(getContext());
     }
 

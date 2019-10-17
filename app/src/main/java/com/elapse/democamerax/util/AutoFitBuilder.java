@@ -20,7 +20,7 @@ import java.util.Objects;
  * author : Kevin.ning
  * e-mail :
  * date   : 2019/10/10 16:15
- * desc   :
+ * desc   :重要辅助类，处理预览尺寸
  * version: 1.0
  */
 public class AutoFitBuilder {

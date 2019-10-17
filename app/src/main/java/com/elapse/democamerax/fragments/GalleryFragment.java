@@ -45,7 +45,7 @@ import java.util.Objects;
  * version: 1.0
  */
 public class GalleryFragment extends Fragment {
-    public static final String KEY_ROOT_DIRECTORY = "root_folder";
+    static final String KEY_ROOT_DIRECTORY = "root_folder";
     public static final String[] EXTENSION_WHITELIST = new String[]{"JPG"};
     private int FLAGS_FULLSCREEN =
             View.SYSTEM_UI_FLAG_LOW_PROFILE |
@@ -56,9 +56,9 @@ public class GalleryFragment extends Fragment {
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 
     public GalleryFragment() {
+
     }
 
-    private File rootDirectory;
     private List<File> mediaList;
     private ViewPager mediaViewPager;
 
@@ -75,8 +75,9 @@ public class GalleryFragment extends Fragment {
         setRetainInstance(true);
         Bundle arguments = getArguments();
         if (arguments != null) {
-            rootDirectory = new File(Objects.requireNonNull(arguments.getString(KEY_ROOT_DIRECTORY)));
+            File rootDirectory = new File(Objects.requireNonNull(arguments.getString(KEY_ROOT_DIRECTORY)));
             mediaList = new ArrayList<>(Arrays.asList(Objects.requireNonNull(rootDirectory.listFiles())));
+            //将图片按拍摄时间逆序排列，处理仓促，方法有待改进
             Collections.sort(mediaList, new Comparator<File>() {
                 @Override
                 public int compare(File f1, File f2) {

@@ -71,7 +71,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class CameraFragment extends Fragment {
     private static final String TAG = "CameraXBasic";
-    private static final String FILENAME = "yyyyMMddHHmmss";
+    private static final String FILENAME = "yyyyMMddHHmmss";//和官方不同，为了便于排序
     private static final String PHOTO_EXTENSION = ".jpg";
     private static final String ACTION_UPDATE_THUMBNAIL = "action_update_thumbnail";
     //    private static final String ACTION_KEY_DOWN = "action_key_down";
@@ -101,6 +101,7 @@ public class CameraFragment extends Fragment {
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            //处理VOLUME_DOWN拍照逻辑
             if (Objects.equals(intent.getAction(), MainActivity.KEY_EVENT_ACTION)) {
                 int keyCode = intent.getIntExtra(MainActivity.KEY_EVENT_EXTRA, KeyEvent.KEYCODE_UNKNOWN);
                 if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
@@ -116,7 +117,9 @@ public class CameraFragment extends Fragment {
                         }
                     }, ANIMATION_SLOW_MILLIS);
                 }
-            } else if (Objects.equals(intent.getAction(), ACTION_UPDATE_THUMBNAIL)) {
+            }
+            //处理更新缩略图逻辑
+            else if (Objects.equals(intent.getAction(), ACTION_UPDATE_THUMBNAIL)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     thumbnail.setForeground(new BitmapDrawable(getResources(), thumbnailBitmap));
                 } else {
@@ -179,7 +182,8 @@ public class CameraFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_camera, container, false);
     }
 
@@ -195,6 +199,8 @@ public class CameraFragment extends Fragment {
         // Reference of the view that holds the gallery thumbnail
         thumbnail = container.findViewById(R.id.photo_view_button);
 //        val  = container.findViewById<ImageButton>(R.id.photo_view_button)
+
+        //以下代码在kotlin中使用协程处理，很方便，用Java改写成子线程+广播
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -226,6 +232,7 @@ public class CameraFragment extends Fragment {
             // but otherwise other apps will not be able to access our images unless we
             // scan them using [MediaScannerConnection]
             String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(PHOTO_EXTENSION);
+            //通知系统更新相册
             MediaScannerConnection.scanFile(
                     getContext(), new String[]{photoFile.getAbsolutePath()}, new String[]{mimeType}, null);
         }
@@ -303,6 +310,7 @@ public class CameraFragment extends Fragment {
 
     /**
      * Declare and bind preview, capture and analysis use cases
+     * 更新相机参数均需要调用
      */
     private void bindCameraUseCases() {
         // Make sure that there are no other use cases bound to CameraX
@@ -408,7 +416,7 @@ public class CameraFragment extends Fragment {
             }
         });
 
-// Listener for button used to switch cameras
+        // Listener for button used to switch cameras
         controls.findViewById(R.id.camera_switch_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -455,6 +463,8 @@ public class CameraFragment extends Fragment {
      *
      * <p>All we need to do is override the function `analyze` with our desired operations. Here,
      * we compute the average luminosity of the image by looking at the Y plane of the YUV frame.
+     *
+     * 亮度滤镜，来自官方
      */
     class LuminosityAnalyzer implements ImageAnalysis.Analyzer {
         private int frameRateWindow = 8;
