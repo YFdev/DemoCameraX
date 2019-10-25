@@ -24,17 +24,22 @@ import java.util.Objects;
  * author : Kevin.ning
  * e-mail :
  * date   : 2019/10/10 16:15
- * desc   :重要辅助类，处理预览尺寸
+ * desc   :实例化【Preview】，当config改变的时候，能够自动旋转或重新计算尺寸
  * version: 1.0
  */
 public class AutoFitBuilder {
     private WeakReference<TextureView> viewFinderRef;
 
     private Preview useCase;
+    //用于记录useCase output的旋转角度
     private int bufferRotation = 0;
+    //记录viewFinder的旋转角度
     private int viewFinderRotation = 0;
+    //用于记录useCase output的尺寸
     private Size bufferDimens = new Size(0, 0);
+    //记录viewFinder的尺寸
     private Size viewFinderDimens = new Size(0, 0);
+    //
     private int viewFinderDisplay = -1;
     private DisplayManager mDisplayManager;
 
@@ -88,7 +93,7 @@ public class AutoFitBuilder {
 
                     @Override
                     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-                        return true;
+                        return true;//true means destroy surface
                     }
 
                     @Override
@@ -102,6 +107,8 @@ public class AutoFitBuilder {
                 updateTransform(viewFinder, rotation, output.getTextureSize(), viewFinderDimens);
             }
         });
+
+        // Every time the orientation of device changes, recompute layout
         viewFinder.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View view, int left, int top, int right, int bottom, int i4, int i5, int i6, int i7) {
@@ -232,7 +239,11 @@ public class AutoFitBuilder {
         }
         return rotation;
     }
-
+    /**
+     * Main entrypoint for users of this class: instantiates the adapter and returns an instance
+     * of [Preview] which automatically adjusts in size and rotation to compensate for
+     * config changes.
+     */
     public static Preview build(PreviewConfig config, TextureView viewFinder) {
         return new AutoFitBuilder(config, new WeakReference<TextureView>(viewFinder)).useCase;
     }

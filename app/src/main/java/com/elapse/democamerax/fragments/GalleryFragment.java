@@ -46,7 +46,7 @@ import java.util.Objects;
  */
 public class GalleryFragment extends Fragment {
     static final String KEY_ROOT_DIRECTORY = "root_folder";
-    public static final String[] EXTENSION_WHITELIST = new String[]{"JPG"};
+//    public static final String[] EXTENSION_WHITELIST = new String[]{"JPG"};
     private int FLAGS_FULLSCREEN =
             View.SYSTEM_UI_FLAG_LOW_PROFILE |
                     View.SYSTEM_UI_FLAG_FULLSCREEN |

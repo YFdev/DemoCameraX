@@ -279,6 +279,7 @@ public class CameraFragment extends Fragment {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        //将图片逆序排列，取出第一个（即最新拍摄的）
                         List<File> fileList = Arrays.asList(Objects.requireNonNull(outputDirectory.listFiles()));
                         Collections.sort(fileList, new Comparator<File>() {
                             @Override
