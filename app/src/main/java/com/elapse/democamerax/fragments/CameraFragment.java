@@ -468,7 +468,7 @@ public class CameraFragment extends Fragment {
      */
     class LuminosityAnalyzer implements ImageAnalysis.Analyzer {
         private int frameRateWindow = 8;
-        private ArrayDeque<Long> frameTimestamps = new ArrayDeque<Long>(5);
+        private ArrayDeque<Long> frameTimestamps = new ArrayDeque<>(5);
         private ArrayList<AnalysisCallBack> listeners = new ArrayList<>();
         private long lastAnalyzedTimestamp = 0L;
         double framesPerSecond = -1.0;

@@ -2,6 +2,7 @@ package com.elapse.democamerax.util;
 
 import android.content.Context;
 import android.graphics.Matrix;
+import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
 import android.util.Size;
 import android.view.Display;
@@ -12,6 +13,9 @@ import android.view.ViewGroup;
 
 import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
+
+import com.elapse.democamerax.fragments.Renderer;
+import com.elapse.democamerax.fragments.TextureDrawer;
 
 import java.lang.ref.WeakReference;
 import java.util.Objects;
@@ -25,6 +29,17 @@ import java.util.Objects;
  */
 public class AutoFitBuilder {
     private WeakReference<TextureView> viewFinderRef;
+
+    private Preview useCase;
+    private int bufferRotation = 0;
+    private int viewFinderRotation = 0;
+    private Size bufferDimens = new Size(0, 0);
+    private Size viewFinderDimens = new Size(0, 0);
+    private int viewFinderDisplay = -1;
+    private DisplayManager mDisplayManager;
+
+    private int mOESTextureId = -1;
+    private Renderer mRenderer  = new Renderer();
 
     private AutoFitBuilder(PreviewConfig config, WeakReference<TextureView> viewFinderRef) {
         this.viewFinderRef = viewFinderRef;
@@ -47,15 +62,41 @@ public class AutoFitBuilder {
         // Every time the view finder is updated, recompute layout
         useCase.setOnPreviewOutputUpdateListener(new Preview.OnPreviewOutputUpdateListener() {
             @Override
-            public void onUpdated(Preview.PreviewOutput output) {
-                TextureView viewFinder = viewFinderRef.get();
+            public void onUpdated(final Preview.PreviewOutput output) {
+                final TextureView viewFinder = viewFinderRef.get();
                 if (viewFinder == null) {
                     return;
                 }
                 ViewGroup parent = (ViewGroup) viewFinder.getParent();
                 parent.removeView(viewFinder);
                 parent.addView(viewFinder, 0);
-                viewFinder.setSurfaceTexture(output.getSurfaceTexture());
+                // 启用下面的代码正常显示内容
+//                viewFinder.setSurfaceTexture(output.getSurfaceTexture());
+                //启用下面的代码，走 GL 线程，图像经过黑白滤镜处理
+                viewFinder.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+                    @Override
+                    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+                        mOESTextureId = TextureDrawer.createOESTextureObject();
+                        mRenderer.init(viewFinder, mOESTextureId);
+                        mRenderer.initOESTexture(output.getSurfaceTexture());
+                    }
+
+                    @Override
+                    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+
+                    }
+
+                    @Override
+                    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+                        return true;
+                    }
+
+                    @Override
+                    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+
+                    }
+                });
+
                 bufferRotation = output.getRotationDegrees();
                 int rotation = getDisplaySurfaceRotation(viewFinder.getDisplay());
                 updateTransform(viewFinder, rotation, output.getTextureSize(), viewFinderDimens);
@@ -93,13 +134,6 @@ public class AutoFitBuilder {
         });
     }
 
-    private Preview useCase;
-    private int bufferRotation = 0;
-    private int viewFinderRotation = 0;
-    private Size bufferDimens = new Size(0, 0);
-    private Size viewFinderDimens = new Size(0, 0);
-    private int viewFinderDisplay = -1;
-    private DisplayManager mDisplayManager;
     private DisplayManager.DisplayListener mDisplayListener = new DisplayManager.DisplayListener() {
         @Override
         public void onDisplayAdded(int i) {
