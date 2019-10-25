@@ -222,6 +222,7 @@ public class CameraFragment extends Fragment {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // Update the gallery thumbnail with latest picture taken
                 setGalleryThumbnail(photoFile);
+                Log.e(TAG, "onImageSaved: "+photoFile.getAbsolutePath() );
             }
             // Implicit broadcasts will be ignored for devices running API
             // level >= 24, so if you only target 24+ you can remove this statement
@@ -265,7 +266,7 @@ public class CameraFragment extends Fragment {
         outputDirectory = MainActivity.getOutputDirectory(requireContext());
 
         // Wait for the views to be properly laid out
-        viewFinder.post(new Runnable() {
+        viewFinder.post(new Runnable(){
             @Override
             public void run() {
                 displayId = viewFinder.getDisplay().getDisplayId();
@@ -283,7 +284,7 @@ public class CameraFragment extends Fragment {
                             @Override
                             public int compare(File f1, File f2) {
                                 String s1 = f1.getName().substring(0, f1.getName().lastIndexOf("."));
-                                String s2 = f1.getName().substring(0, f2.getName().lastIndexOf("."));
+                                String s2 = f2.getName().substring(0, f2.getName().lastIndexOf("."));
                                 try {
                                     Long l1 = Long.valueOf(s1);
                                     Long l2 = Long.valueOf(s2);
@@ -294,10 +295,11 @@ public class CameraFragment extends Fragment {
                                 }
                             }
                         });
+                        for (File file : fileList) Log.e(TAG, "run: "+file.getName());
                         for (File file : fileList) {
                             String name = file.getName();
                             String suffix = name.substring(name.lastIndexOf("."));
-                            if ("JPG".equals(suffix)) {
+                            if (".JPG".equalsIgnoreCase(suffix)) {
                                 setGalleryThumbnail(file);
                                 return;
                             }

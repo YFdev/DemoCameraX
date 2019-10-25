@@ -82,11 +82,15 @@ public class GalleryFragment extends Fragment {
                 @Override
                 public int compare(File f1, File f2) {
                     String s1 = f1.getName().substring(0, f1.getName().lastIndexOf("."));
-                    String s2 = f1.getName().substring(0, f2.getName().lastIndexOf("."));
-
-                    Long l1 = Long.valueOf(s1);
-                    Long l2 = Long.valueOf(s2);
-                    return l2 > l1 ? 1 : (l2 == l1 ? 0 : -1);
+                    String s2 = f2.getName().substring(0, f2.getName().lastIndexOf("."));
+                    try {
+                        Long l1 = Long.valueOf(s1);
+                        Long l2 = Long.valueOf(s2);
+                        return (int) (l2 - l1);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return 0;
+                    }
                 }
             });
             // Populate the ViewPager and implement a cache of two media items

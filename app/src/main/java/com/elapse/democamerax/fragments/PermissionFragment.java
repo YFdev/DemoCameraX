@@ -23,7 +23,7 @@ import com.elapse.democamerax.R;
  */
 public class PermissionFragment extends Fragment {
     private static int PERMISSIONS_REQUEST_CODE = 10;
-    private String[] PERMISSIONS_REQUIRED = new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+    private String[] PERMISSIONS_REQUIRED = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     public PermissionFragment() {
 
